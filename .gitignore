@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Generated native projects
+android/
+ios/
+.kotlin/
+
+# Build products and signing files
+*.aab
+*.jks
+*.keystore
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Local configuration and logs
+.env*.local
+*.log
+*.tsbuildinfo
+.DS_Store
