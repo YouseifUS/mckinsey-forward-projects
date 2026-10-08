@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import { AppIcon } from './app-icon';
 import { AppText } from './app-text';
-import { colors, spacing } from '@/theme/theme';
+import { colors, fonts, spacing } from '@/theme/theme';
 
 type Props = {
   title: string;
@@ -46,10 +46,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   pressed: { opacity: 0.65 },
   titleArea: { flex: 1, paddingHorizontal: spacing.md },
-  title: { color: colors.text, fontSize: 20, fontWeight: '800' },
+  title: { color: colors.text, fontFamily: fonts.display, fontSize: 26, lineHeight: 42 },
   subtitle: { color: colors.textSecondary, fontSize: 13, marginTop: 2 },
   right: { width: 44, alignItems: 'flex-end' },
 });

@@ -6,7 +6,7 @@ import { AppIcon } from '@/components/app-icon';
 import { AppText } from '@/components/app-text';
 import { ErrorState, LoadingState } from '@/components/states';
 import { useHabits } from '@/hooks/use-habits';
-import { colors, radius, spacing } from '@/theme/theme';
+import { colors, fonts, radius, spacing } from '@/theme/theme';
 import { formatArabicNumber } from '@/business/dates';
 
 export default function ArchivedHabitsScreen() {
@@ -57,11 +57,11 @@ export default function ArchivedHabitsScreen() {
 const styles = StyleSheet.create({
   content: { padding: spacing.lg, gap: spacing.md, paddingBottom: spacing.xl },
   intro: { color: colors.textSecondary, fontSize: 14, lineHeight: 21, marginBottom: spacing.sm },
-  card: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.lg, gap: spacing.md },
+  card: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.lg, gap: spacing.md, borderWidth: 1, borderColor: colors.border },
   cardTop: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   cardIcon: { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.primarySoft, alignItems: 'center', justifyContent: 'center' },
   name: { flex: 1, color: colors.text, fontSize: 17, fontWeight: '800' },
-  intention: { color: colors.primaryDark, fontSize: 18, lineHeight: 25, fontWeight: '600' },
+  intention: { color: colors.primaryDark, fontFamily: fonts.display, fontSize: 25, lineHeight: 38 },
   stats: { color: colors.textMuted, fontSize: 12 },
   pressed: { opacity: 0.7 },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl, gap: spacing.md },

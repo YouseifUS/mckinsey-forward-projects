@@ -3,6 +3,8 @@ import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-n
 import { router } from 'expo-router';
 import { Screen } from '@/components/screen';
 import { AppIcon } from '@/components/app-icon';
+import { BrandMark } from '@/components/brand-mark';
+import { IslamicPattern } from '@/components/islamic-pattern';
 import { HabitCard } from '@/components/habit-card';
 import { AppButton } from '@/components/app-button';
 import { AppText } from '@/components/app-text';
@@ -10,19 +12,21 @@ import { ErrorState, LoadingState } from '@/components/states';
 import { useHabits } from '@/hooks/use-habits';
 import { useDatabase } from '@/database/use-database';
 import { completeHabit, undoCompletion } from '@/database/habit-repository';
-import { colors, radius, shadows, spacing } from '@/theme/theme';
-import { formatFriendlyDate } from '@/business/dates';
+import { colors, fonts, radius, spacing } from '@/theme/theme';
+import { formatArabicNumber, formatFriendlyDate } from '@/business/dates';
 
 export default function HomeScreen() {
   const db = useDatabase();
   const { habits, loading, error, reload } = useHabits(false);
   const [refreshing, setRefreshing] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const completedCount = habits.filter((habit) => habit.completedToday).length;
+  const progress = habits.length ? completedCount / habits.length : 0;
+  const habitCountLabel = habits.length === 1 ? 'عادة واحدة' : habits.length === 2 ? 'عادتان' : `${formatArabicNumber(habits.length)} ${habits.length <= 10 ? 'عادات' : 'عادة'}`;
 
   const refresh = async () => {
     setRefreshing(true);
-    await reload();
-    setRefreshing(false);
+    try { await reload(); } finally { setRefreshing(false); }
   };
 
   const toggleHabit = async (id: string, completed: boolean) => {
@@ -33,118 +37,106 @@ export default function HomeScreen() {
   };
 
   return (
-    <Screen includeBottomInset={false}>
+    <Screen>
       <View style={styles.header}>
-        <View>
-          <AppText style={styles.eyebrow}>{formatFriendlyDate()}</AppText>
-          <AppText style={styles.title}>نواياك</AppText>
+        <View style={styles.brand}>
+          <View style={styles.brandIcon}><BrandMark size={42} /></View>
+          <View>
+            <AppText style={styles.title}>نية</AppText>
+            <AppText style={styles.tagline}>خيرٌ صغير، وأثرٌ يبقى</AppText>
+          </View>
         </View>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="عرض العادات المؤرشفة"
-          onPress={() => router.push('/archived')}
-          style={({ pressed }) => [styles.archiveButton, pressed && styles.pressed]}>
-          <AppIcon name="archive" size={23} color={colors.primaryDark} />
+        <Pressable accessibilityRole="button" accessibilityLabel="عرض العادات المؤرشفة" onPress={() => router.push('/archived')} style={({ pressed }) => [styles.archiveButton, pressed && styles.pressed]}>
+          <AppIcon name="archive" size={20} color={colors.primary} />
+          <AppText style={styles.archiveLabel}>الأرشيف</AppText>
         </Pressable>
       </View>
 
-      {notice ? <AppText accessibilityLiveRegion="polite" style={styles.notice}>{notice}</AppText> : null}
+      {loading ? <LoadingState /> : error ? <ErrorState message={error} onRetry={() => void reload()} /> : (
+        <ScrollView contentContainerStyle={styles.content} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void refresh()} tintColor={colors.primary} colors={[colors.primary]} />} showsVerticalScrollIndicator={false}>
+          <View style={styles.hero}>
+            <IslamicPattern />
+            <AppText style={styles.date}>{formatFriendlyDate()}</AppText>
+            <AppText style={styles.heroTitle}>{habits.length ? 'جدّد نيتك، وابدأ يومك' : 'كل عمل طيّب يبدأ بنيّة'}</AppText>
+            <AppText style={styles.heroMessage}>{habits.length ? 'خطوة صغيرة اليوم، تنمّي فيك خيرًا كل يوم.' : 'اغرس عادة بمعنى، وامنحها قليلًا من وقتك كل يوم.'}</AppText>
+            {habits.length > 0 ? (
+              <View style={styles.progressArea}>
+                <View style={styles.progressHeading}>
+                  <AppText style={styles.progressLabel}>خطواتك اليوم</AppText>
+                  <AppText style={styles.progressValue}>{formatArabicNumber(completedCount)} من {formatArabicNumber(habits.length)}</AppText>
+                </View>
+                <View accessibilityRole="progressbar" accessibilityLabel="تقدم عادات اليوم" accessibilityValue={{ min: 0, max: habits.length, now: completedCount }} style={styles.progressTrack}>
+                  <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
+                </View>
+              </View>
+            ) : <View style={styles.heroRule} />}
+          </View>
 
-      {loading ? (
-        <LoadingState />
-      ) : error ? (
-        <ErrorState message={error} onRetry={() => void reload()} />
-      ) : habits.length === 0 ? (
-        <View style={styles.empty}>
-          <View style={styles.emptyIcon}>
-            <AppIcon name="spark" size={38} color={colors.primary} />
-          </View>
-          <AppText style={styles.emptyTitle}>ابدأ بالشخص اللي ناوي تكونه</AppText>
-          <AppText style={styles.emptyMessage}>
-            أنشئ عادة مبنية على نية مهمة بالنسبالك. الأفعال الصغيرة ممكن تتحول بالتدريج لجزء حقيقي من شخصيتك.
-          </AppText>
-          <AppButton label="أنشئ أول عادة" onPress={() => router.push('/create')} />
-        </View>
-      ) : (
-        <ScrollView
-          contentContainerStyle={styles.content}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void refresh()} tintColor={colors.primary} />}
-          showsVerticalScrollIndicator={false}>
-          <View style={styles.prompt}>
-            <AppText style={styles.promptLabel}>تذكير بسيط</AppText>
-            <AppText style={styles.promptText}>الاستمرارية بتكبر مع تكرار الفعل، مش مع الأيام المثالية.</AppText>
-          </View>
-          {habits.map((habit) => (
-            <HabitCard
-              key={habit.id}
-              habit={habit}
-              onToggle={() => toggleHabit(habit.id, habit.completedToday)}
-              onError={setNotice}
-            />
-          ))}
-          <View style={styles.bottomSpace} />
+          {notice ? <AppText accessibilityLiveRegion="polite" style={styles.notice}>{notice}</AppText> : null}
+          {habits.length === 0 ? (
+            <View style={styles.empty}>
+              <View style={styles.emptyMark}><BrandMark size={138} /></View>
+              <AppText style={styles.emptyTitle}>اغرس أول عادة</AppText>
+              <AppText style={styles.emptyMessage}>ابدأ بشيء بسيط يقرّبك من الشخص اللي ناوي تكونه. كل مرة ترجع فيها لنيتك، هي بداية جديدة.</AppText>
+              <AppText style={styles.examples}>قراءة  ·  حركة  ·  تعلّم  ·  ذكر</AppText>
+              <View style={styles.divider} />
+              <AppText style={styles.gentleNote}>على مهل… النمو يحتاج رعاية، مش استعجال.</AppText>
+            </View>
+          ) : (
+            <>
+              <View style={styles.sectionHeading}>
+                <AppText style={styles.sectionTitle}>نواياك اليومية</AppText>
+                <AppText style={styles.count}>{habitCountLabel}</AppText>
+              </View>
+              {habits.map((habit) => <HabitCard key={habit.id} habit={habit} onToggle={() => toggleHabit(habit.id, habit.completedToday)} onError={setNotice} />)}
+              <AppText style={styles.gentleNote}>كل يوم فرصة جديدة ترجع فيها لنيتك.</AppText>
+            </>
+          )}
         </ScrollView>
       )}
 
-      {habits.length > 0 && !loading && !error ? (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="إنشاء عادة"
-          onPress={() => router.push('/create')}
-          style={({ pressed }) => [styles.fab, pressed && styles.fabPressed]}>
-          <AppIcon name="add" color={colors.white} size={28} />
-        </Pressable>
+      {!loading && !error ? (
+        <View style={styles.footer}>
+          <AppButton label={habits.length ? 'اغرس نية جديدة' : 'ابدأ بنيّة'} icon={<AppIcon name="add" size={20} color={colors.white} />} onPress={() => router.push('/create')} />
+          <AppText style={styles.privacy}>رحلتك لك وحدك · بياناتك محفوظة على جهازك</AppText>
+        </View>
       ) : null}
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.md,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  eyebrow: { color: colors.textSecondary, fontSize: 13, fontWeight: '600', marginBottom: 3 },
-  title: { color: colors.text, fontSize: 30, lineHeight: 36, fontWeight: '800', letterSpacing: -0.7 },
-  archiveButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...shadows.card,
-  },
+  header: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.md, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm },
+  brand: { flexDirection: 'row', alignItems: 'center', gap: 10, flexShrink: 1 },
+  brandIcon: { width: 52, height: 56, borderRadius: 16, backgroundColor: colors.forest, alignItems: 'center', justifyContent: 'center' },
+  title: { color: colors.text, fontFamily: fonts.display, fontSize: 36, lineHeight: 51 },
+  tagline: { color: colors.textSecondary, fontSize: 12, lineHeight: 19, marginTop: -5 },
+  archiveButton: { minHeight: 46, paddingHorizontal: 12, borderRadius: 14, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, flexDirection: 'row', alignItems: 'center', gap: 6 },
+  archiveLabel: { color: colors.primaryDark, fontSize: 12, fontWeight: '700' },
   pressed: { opacity: 0.65 },
-  content: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm, gap: spacing.md },
-  prompt: { backgroundColor: colors.accentSoft, borderRadius: radius.md, padding: spacing.md, gap: spacing.xs },
-  promptLabel: { color: colors.accent, fontSize: 12, fontWeight: '800' },
-  promptText: { color: colors.text, fontSize: 14, lineHeight: 20, fontWeight: '600' },
-  notice: { marginHorizontal: spacing.lg, color: colors.danger, fontSize: 13, textAlign: 'center' },
-  empty: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: spacing.xl, gap: spacing.md },
-  emptyIcon: { width: 88, height: 88, borderRadius: 44, backgroundColor: colors.primarySoft, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.sm },
-  emptyTitle: { color: colors.text, fontSize: 24, lineHeight: 31, fontWeight: '800', textAlign: 'center' },
-  emptyMessage: { color: colors.textSecondary, fontSize: 15, lineHeight: 23, textAlign: 'center', marginBottom: spacing.sm },
-  fab: {
-    position: 'absolute',
-    left: spacing.lg,
-    bottom: spacing.lg,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.24,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  fabPressed: { transform: [{ scale: 0.94 }] },
-  bottomSpace: { height: 96 },
+  content: { paddingHorizontal: spacing.lg, paddingBottom: spacing.lg, gap: spacing.md, flexGrow: 1 },
+  hero: { backgroundColor: colors.forest, borderRadius: radius.lg, padding: spacing.lg, overflow: 'hidden', borderWidth: 1, borderColor: colors.forestDeep, gap: 8 },
+  date: { color: colors.goldLight, fontSize: 12, lineHeight: 20, fontWeight: '700' },
+  heroTitle: { color: colors.goldLight, fontFamily: fonts.display, fontSize: 29, lineHeight: 46 },
+  heroMessage: { color: colors.onForest, fontSize: 14, lineHeight: 23 },
+  heroRule: { width: 44, height: 2, backgroundColor: colors.gold, marginTop: 6, alignSelf: 'flex-start' },
+  progressArea: { marginTop: spacing.sm, gap: 10 },
+  progressHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm },
+  progressLabel: { color: colors.onForest, fontSize: 12 },
+  progressValue: { color: colors.goldLight, fontSize: 13, fontWeight: '700' },
+  progressTrack: { height: 5, borderRadius: 3, backgroundColor: '#36574C', overflow: 'hidden' },
+  progressFill: { height: 5, borderRadius: 3, backgroundColor: colors.gold },
+  sectionHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 6 },
+  sectionTitle: { color: colors.text, fontFamily: fonts.display, fontSize: 26, lineHeight: 42 },
+  count: { color: colors.primaryDark, fontSize: 12, paddingHorizontal: 12, paddingVertical: 6, backgroundColor: colors.primarySoft, borderRadius: radius.pill },
+  notice: { color: colors.danger, fontSize: 14, textAlign: 'center', lineHeight: 22 },
+  empty: { flexGrow: 1, alignItems: 'center', justifyContent: 'center', gap: 12, paddingVertical: spacing.lg },
+  emptyMark: { width: 158, height: 164, borderTopLeftRadius: 79, borderTopRightRadius: 79, borderBottomLeftRadius: 24, borderBottomRightRadius: 24, backgroundColor: colors.forest, alignItems: 'center', justifyContent: 'center', marginBottom: 4 },
+  emptyTitle: { color: colors.text, fontFamily: fonts.display, fontSize: 32, lineHeight: 48, textAlign: 'center' },
+  emptyMessage: { maxWidth: 330, color: colors.textSecondary, fontSize: 16, lineHeight: 26, textAlign: 'center' },
+  examples: { color: colors.primary, fontSize: 13, lineHeight: 22 },
+  divider: { width: 32, height: 1, backgroundColor: colors.gold, marginVertical: 4 },
+  gentleNote: { color: colors.textSecondary, fontSize: 13, lineHeight: 22, textAlign: 'center', paddingVertical: 4 },
+  footer: { paddingHorizontal: spacing.lg, paddingTop: 12, paddingBottom: 8, borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.background, gap: 8 },
+  privacy: { color: colors.textMuted, fontSize: 11, lineHeight: 18, textAlign: 'center' },
 });

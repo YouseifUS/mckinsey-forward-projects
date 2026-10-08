@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.sm,
   },
-  primary: { backgroundColor: colors.primary },
+  primary: { backgroundColor: colors.primary, borderWidth: 1, borderColor: colors.primaryDark },
   secondary: { backgroundColor: colors.primarySoft },
   ghost: { backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.border },
   danger: { backgroundColor: colors.dangerSoft },

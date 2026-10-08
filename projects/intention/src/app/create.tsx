@@ -15,10 +15,11 @@ import { TextField } from '@/components/text-field';
 import { AppButton } from '@/components/app-button';
 import { AppIcon } from '@/components/app-icon';
 import { AppText } from '@/components/app-text';
+import { BrandMark } from '@/components/brand-mark';
 import { createHabit } from '@/database/habit-repository';
 import { useDatabase } from '@/database/use-database';
 import { EMPTY_HABIT_DRAFT, type HabitDraft } from '@/types/habit';
-import { colors, radius, spacing } from '@/theme/theme';
+import { colors, fonts, radius, spacing } from '@/theme/theme';
 import { formatArabicNumber } from '@/business/dates';
 
 type FieldName = keyof HabitDraft;
@@ -164,7 +165,10 @@ export default function CreateHabitScreen() {
             <Review draft={draft} onEdit={(targetStep) => setStep(targetStep)} />
           ) : (
             <View style={styles.stepContent}>
-              <AppText style={styles.eyebrow}>{currentStep.eyebrow}</AppText>
+              <View style={styles.stepHeading}>
+                <AppText style={styles.eyebrow}>{currentStep.eyebrow}</AppText>
+                <View style={styles.stepMark}><BrandMark size={38} /></View>
+              </View>
               <AppText style={styles.question}>{currentStep.question}</AppText>
               <AppText style={styles.explanation}>{currentStep.explanation}</AppText>
               <View style={styles.exampleCard}>
@@ -232,16 +236,18 @@ function Review({ draft, onEdit }: { draft: HabitDraft; onEdit: (step: number) =
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  progressTrack: { height: 3, marginHorizontal: spacing.lg, backgroundColor: colors.surfaceMuted, borderRadius: 2, overflow: 'hidden' },
-  progressFill: { height: 3, backgroundColor: colors.primary, borderRadius: 2 },
+  progressTrack: { height: 4, marginHorizontal: spacing.lg, backgroundColor: colors.surfaceMuted, borderRadius: 2, overflow: 'hidden' },
+  progressFill: { height: 4, backgroundColor: colors.primary, borderRadius: 2 },
   content: { flexGrow: 1, padding: spacing.lg, paddingBottom: spacing.xl, justifyContent: 'space-between' },
   stepContent: { gap: spacing.md },
+  stepHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  stepMark: { width: 46, height: 46, borderRadius: 14, backgroundColor: colors.forest, alignItems: 'center', justifyContent: 'center' },
   eyebrow: { color: colors.primary, fontSize: 13, fontWeight: '800' },
-  question: { color: colors.text, fontSize: 29, lineHeight: 37, fontWeight: '800', letterSpacing: -0.5 },
+  question: { color: colors.text, fontFamily: fonts.display, fontSize: 32, lineHeight: 48 },
   explanation: { color: colors.textSecondary, fontSize: 16, lineHeight: 24 },
-  exampleCard: { backgroundColor: colors.accentSoft, borderRadius: radius.md, padding: spacing.md, gap: spacing.xs },
+  exampleCard: { backgroundColor: colors.accentSoft, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, padding: spacing.md, gap: spacing.xs },
   exampleLabel: { color: colors.accent, fontSize: 12, fontWeight: '800' },
-  example: { color: colors.text, fontSize: 14, lineHeight: 21, fontStyle: 'italic' },
+  example: { color: colors.text, fontSize: 15, lineHeight: 24 },
   actions: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.xl },
   actionButton: { flex: 1 },
   reviewCard: { backgroundColor: colors.surface, borderRadius: radius.lg, overflow: 'hidden', marginTop: spacing.sm },

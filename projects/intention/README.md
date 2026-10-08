@@ -1,16 +1,28 @@
-# Intention | النية
+# نية | Niyyah
 
-**Intention** is an Arabic, offline-first habit-building application for Android and iOS. It was the first mobile application I created as a practical result of my personal learning journey in the McKinsey Forward Program.
+**نية (Niyyah)** is an Arabic, offline-first habit-building application for Android and iOS. It was the first mobile application I created as a practical result of my personal learning journey in the McKinsey Forward Program.
 
 The application is built around a simple idea:
 
 > Build habits around who you want to become, not only what you want to achieve.
 
-## Download the Android app
+## Visual identity
 
-[Download Intention v1.0.0 APK](https://github.com/YouseifUS/mckinsey-forward-projects/releases/download/intention-v1.0.0/intention-arabic-v1.0.0.apk)
+The current interface uses an ivory background, antique-gold controls, deep green panels, subtle eight-point geometric ornament, and a three-leaf sprout mark inspired by daily growth. The app display name is **نية**.
 
-The APK supports Android 7.0 and newer on `arm64-v8a` and `armeabi-v7a` devices. It is signed with a testing key for direct installation and evaluation, not for Google Play production publishing.
+Amiri headings and Tajawal body text are bundled for offline use. Their SIL Open Font Licenses are included in `assets/fonts/`. The editable logo sources are in `assets/images/`.
+
+The app package identifiers and the `intention.db` database name are preserved so the visual update does not create a separate app or reset existing habit data.
+
+## Download the Android app — v2.0.0
+
+[Download نية v2.0.0 APK](https://github.com/YouseifUS/mckinsey-forward-projects/releases/download/intention-v2.0.0/niyyah-v2.0.0.apk)
+
+The v2.0.0 APK includes the new visual identity and supports Android 7.0 and newer on `arm64-v8a` and `armeabi-v7a` devices. It is signed with a testing key for direct installation and evaluation, not for Google Play production publishing.
+
+[Release notes](./CHANGELOG.md) · [Previous v1.0.0 release](https://github.com/YouseifUS/mckinsey-forward-projects/releases/tag/intention-v1.0.0)
+
+<img src="../../docs/images/niyyah-v2-home.png" alt="نية v2.0.0 — Arabic home screen with gold and Islamic geometric design" width="320" />
 
 ## Features
 
@@ -46,6 +58,14 @@ npm start
 ```
 
 Scan the displayed QR code using Expo Go on a device connected to the same network.
+
+### Browser preview
+
+```bash
+npx expo start --web
+```
+
+The browser preview uses the same screens and SQLite repository. `metro.config.js` supports SQLite WebAssembly and sends the isolation headers required by browser storage. Static web hosting must also send `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp`.
 
 ### Validation
 

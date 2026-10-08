@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   compact: { minHeight: 48 },
-  completed: { backgroundColor: colors.primarySoft, borderColor: colors.primarySoft },
+  completed: { backgroundColor: '#E6EEE1', borderColor: '#C2D4BC' },
   check: {
     width: 24,
     height: 24,
@@ -98,9 +98,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  checkCompleted: { backgroundColor: colors.primary, borderColor: colors.primary },
+  checkCompleted: { backgroundColor: colors.success, borderColor: colors.success },
   label: { color: colors.primaryDark, fontSize: 15, fontWeight: '800' },
-  labelCompleted: { color: colors.primaryDark },
+  labelCompleted: { color: colors.success },
   pressed: { opacity: 0.75 },
   message: { color: colors.success, fontSize: 13, lineHeight: 19, textAlign: 'center' },
 });

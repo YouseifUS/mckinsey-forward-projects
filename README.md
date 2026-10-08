@@ -4,9 +4,9 @@
 
 This repository is a collection of personal projects and practical applications inspired by the concepts and skills I learned through the **McKinsey Forward Program**.
 
-## 01 — Intention | النية
+## 01 — نية | Niyyah
 
-**Intention** is my first mobile application in this learning journey. It is an Arabic, offline-first habit builder that helps people connect daily habits with the person they want to become—not only with goals, streaks, or productivity numbers.
+**نية (Niyyah)** is my first mobile application in this learning journey. It is an Arabic, offline-first habit builder that helps people connect daily habits with the person they want to become—not only with goals, streaks, or productivity numbers.
 
 The app guides each habit through five connected ideas:
 
@@ -16,12 +16,16 @@ The app guides each habit through five connected ideas:
 - **Routine:** the specific action to perform.
 - **Reward:** what reinforces the behavior.
 
+**Version 2.0.0** introduces the gold and Islamic geometric visual identity under the name **نية**, with an ivory background, Arabic typography, a sprout icon, and clear daily progress.
+
+<img src="./docs/images/niyyah-v2-home.png" alt="نية v2.0.0 home screen" width="320" />
+
 ### Download and source code
 
-- [Download the Android APK](https://github.com/YouseifUS/mckinsey-forward-projects/releases/download/intention-v1.0.0/intention-arabic-v1.0.0.apk)
-- [View the v1.0.0 release notes](https://github.com/YouseifUS/mckinsey-forward-projects/releases/tag/intention-v1.0.0)
+- [Download the Android APK](https://github.com/YouseifUS/mckinsey-forward-projects/releases/download/intention-v2.0.0/niyyah-v2.0.0.apk)
+- [View the v2.0.0 release notes](https://github.com/YouseifUS/mckinsey-forward-projects/releases/tag/intention-v2.0.0)
 - [Browse the complete source code](./projects/intention)
-- Version: `1.0.0`
+- Version: `2.0.0`
 - Android support: Android 7.0 and newer (`arm64-v8a` and `armeabi-v7a`)
 
 > The APK is signed with a testing key and is intended for direct installation and evaluation. It is not a Google Play production build.

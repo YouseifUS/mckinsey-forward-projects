@@ -109,7 +109,7 @@ export function CompletionCalendar({ completionDates }: { completionDates: strin
 }
 
 const styles = StyleSheet.create({
-  card: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.md, gap: spacing.md },
+  card: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.md, gap: spacing.md, borderWidth: 1, borderColor: colors.border },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   month: { color: colors.text, fontSize: 16, fontWeight: '800' },
   navButton: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: colors.surfaceMuted },

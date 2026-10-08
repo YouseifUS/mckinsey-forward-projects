@@ -23,7 +23,7 @@ export class DatabaseErrorBoundary extends Component<PropsWithChildren, State> {
       return (
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.content}>
-            <AppText style={styles.eyebrow}>النية</AppText>
+            <AppText style={styles.eyebrow}>نية</AppText>
             <AppText style={styles.title}>مقدرناش نفتح عاداتك</AppText>
             <AppText style={styles.message}>
               بياناتك متغيرتش. جرّب تفتح قاعدة البيانات المحلية تاني، ولو المشكلة استمرت اقفل التطبيق وافتحه من جديد.

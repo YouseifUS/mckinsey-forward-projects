@@ -43,6 +43,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     padding: spacing.md,
     justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   value: { color: colors.text, fontSize: 21, fontWeight: '800' },
   suffix: { color: colors.textSecondary, fontSize: 11, fontWeight: '600' },

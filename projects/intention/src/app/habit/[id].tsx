@@ -6,6 +6,7 @@ import { PageHeader } from '@/components/page-header';
 import { AppIcon, type AppIconName } from '@/components/app-icon';
 import { AppButton } from '@/components/app-button';
 import { AppText } from '@/components/app-text';
+import { IslamicPattern } from '@/components/islamic-pattern';
 import { CompletionButton } from '@/components/completion-button';
 import { CompletionCalendar } from '@/components/completion-calendar';
 import { Statistics } from '@/components/statistics';
@@ -18,7 +19,7 @@ import {
   setHabitArchived,
   undoCompletion,
 } from '@/database/habit-repository';
-import { colors, radius, spacing } from '@/theme/theme';
+import { colors, fonts, radius, spacing } from '@/theme/theme';
 
 export default function HabitDetailsScreen() {
   const params = useLocalSearchParams<{ id?: string; created?: string }>();
@@ -101,6 +102,7 @@ export default function HabitDetailsScreen() {
 
           <Section label="الهوية">
             <View style={styles.identityCard}>
+              <IslamicPattern />
               <AppText style={styles.habitName}>{habit.name}</AppText>
               <AppText style={styles.intention}>«{habit.intention}»</AppText>
               <View style={styles.divider} />
@@ -214,16 +216,16 @@ const styles = StyleSheet.create({
   notice: { color: colors.primaryDark, fontSize: 13, textAlign: 'center', backgroundColor: colors.primarySoft, borderRadius: radius.sm, padding: spacing.sm },
   section: { gap: spacing.md },
   sectionHeader: { gap: spacing.xs },
-  sectionLabel: { color: colors.text, fontSize: 18, fontWeight: '800' },
+  sectionLabel: { color: colors.text, fontFamily: fonts.display, fontSize: 25, lineHeight: 39 },
   sectionSubtitle: { color: colors.textSecondary, fontSize: 13, lineHeight: 19 },
-  identityCard: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.lg, gap: spacing.md },
-  habitName: { color: colors.textMuted, fontSize: 13, fontWeight: '800' },
-  intention: { color: colors.primaryDark, fontSize: 24, lineHeight: 33, fontWeight: '800' },
-  divider: { height: 1, backgroundColor: colors.border },
-  smallLabel: { color: colors.textMuted, fontSize: 12, fontWeight: '800' },
-  meaning: { color: colors.text, fontSize: 16, lineHeight: 24 },
+  identityCard: { backgroundColor: colors.forest, borderRadius: radius.lg, padding: spacing.lg, gap: spacing.md, overflow: 'hidden', borderWidth: 1, borderColor: colors.forestDeep },
+  habitName: { color: colors.gold, fontSize: 13, fontWeight: '800' },
+  intention: { color: colors.goldLight, fontFamily: fonts.display, fontSize: 29, lineHeight: 44 },
+  divider: { height: 1, backgroundColor: '#496251' },
+  smallLabel: { color: colors.gold, fontSize: 12, fontWeight: '800' },
+  meaning: { color: colors.onForest, fontSize: 16, lineHeight: 26 },
   loop: { alignItems: 'stretch' },
-  loopCard: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, minHeight: 88, padding: spacing.md, borderRadius: radius.md },
+  loopCard: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, minHeight: 88, padding: spacing.md, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border },
   accentLoop: { backgroundColor: colors.accentSoft },
   primaryLoop: { backgroundColor: colors.primarySoft },
   softLoop: { backgroundColor: colors.surface },
@@ -236,5 +238,5 @@ const styles = StyleSheet.create({
   deleteButton: { minHeight: 50, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm },
   deleteLabel: { color: colors.danger, fontSize: 14, fontWeight: '700' },
   pressed: { opacity: 0.65 },
-  footerThought: { color: colors.textSecondary, fontSize: 14, lineHeight: 21, textAlign: 'center', fontStyle: 'italic', paddingHorizontal: spacing.md },
+  footerThought: { color: colors.textSecondary, fontFamily: fonts.display, fontSize: 21, lineHeight: 34, textAlign: 'center', paddingHorizontal: spacing.md },
 });
