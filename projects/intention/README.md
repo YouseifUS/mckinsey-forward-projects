@@ -8,7 +8,7 @@ The application is built around a simple idea:
 
 ## Download the Android app
 
-[Download Intention v1.0.0 APK](../../releases/intention-arabic-v1.0.0.apk)
+[Download Intention v1.0.0 APK](https://github.com/YouseifUS/mckinsey-forward-projects/releases/download/intention-v1.0.0/intention-arabic-v1.0.0.apk)
 
 The APK supports Android 7.0 and newer on `arm64-v8a` and `armeabi-v7a` devices. It is signed with a testing key for direct installation and evaluation, not for Google Play production publishing.
 

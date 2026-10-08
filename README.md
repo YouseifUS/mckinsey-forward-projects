@@ -18,7 +18,8 @@ The app guides each habit through five connected ideas:
 
 ### Download and source code
 
-- [Download the Android APK](./releases/intention-arabic-v1.0.0.apk)
+- [Download the Android APK](https://github.com/YouseifUS/mckinsey-forward-projects/releases/download/intention-v1.0.0/intention-arabic-v1.0.0.apk)
+- [View the v1.0.0 release notes](https://github.com/YouseifUS/mckinsey-forward-projects/releases/tag/intention-v1.0.0)
 - [Browse the complete source code](./projects/intention)
 - Version: `1.0.0`
 - Android support: Android 7.0 and newer (`arm64-v8a` and `armeabi-v7a`)
