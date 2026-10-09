@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- Keep the existing React Native + Expo application, Arabic screens, fonts, identity, identifiers, and local database.
+- Set browser RTL through the native-view DOM attribute instead of an unsupported web style; retain native RTL layout.
+- Refresh daily completion/progress and habit details at local midnight and on return from the background.
+- Add regression tests for resume, cleanup, month/year/leap-day boundaries, and daylight-saving changes.
+- Add native platform export scripts, EAS APK/store build profiles, and Android/iOS build instructions.
+- Add GitHub Actions validation for dependencies, tests, TypeScript, lint, and Android/iOS/web production bundles.
+
+Validation: 58 automated tests pass; dependency compatibility, TypeScript, lint, and Android/iOS/web production bundle exports pass. Browser checks cover creation, persistence after reload, completion/undo, editing, archiving, archive listing, and restoration. Physical-device notification delivery and iOS native compilation still require device/Xcode testing.
+
 ## 2.1.0 — 2026-10-09
 
 - Optional daily habit time and a local notification titled with the habit name.

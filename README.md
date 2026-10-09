@@ -28,6 +28,7 @@ The app guides each habit through five connected ideas:
 - [View the v2.1.0 release notes](https://github.com/YouseifUS/mckinsey-forward-projects/releases/tag/intention-v2.1.0)
 - [Browse the complete source code](./projects/intention)
 - Version: `2.1.0`
+- Built with **React Native + Expo** for Android and iOS. [Run and build the application](./projects/intention#run-locally).
 - Android support: Android 7.0 and newer (`arm64-v8a` and `armeabi-v7a`)
 
 > The APK is signed with a testing key and is intended for direct installation and evaluation. It is not a Google Play production build.

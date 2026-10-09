@@ -1,3 +1,4 @@
+import { observeDailyRefresh } from '@/services/daily-refresh';
 import { useCallback, useState } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { listHabits } from '@/database/habit-repository';
@@ -25,6 +26,7 @@ export function useHabits(archived = false) {
     useCallback(() => {
       setLoading(true);
       void reload();
+      return observeDailyRefresh(() => void reload());
     }, [reload]),
   );
 

@@ -2,7 +2,7 @@ import { ReminderObserver } from '@/components/reminder-observer';
 import { Stack } from 'expo-router';
 import { SQLiteProvider } from 'expo-sqlite';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { useFonts } from 'expo-font';
 import { LoadingState } from '@/components/states';
 import { Screen } from '@/components/screen';
@@ -38,4 +38,4 @@ export default function RootLayout() {
   );
 }
 
-const styles = StyleSheet.create({ fill: { flex: 1, direction: 'rtl' } });
+const styles = StyleSheet.create({ fill: { flex: 1, ...(Platform.OS !== 'web' && { direction: 'rtl' as const }) } });

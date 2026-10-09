@@ -53,19 +53,41 @@ The v2.1.0 APK adds optional daily habit reminders and includes the gold visual 
 
 ## Run locally
 
-Requirements: Node.js 22.13 or newer and npm.
+This is a real React Native application using Expo. Android and iOS render native React Native views; the optional browser preview is not a WebView wrapper.
+
+Requirements: Node.js 22.13 or newer and npm. Run all commands below from `projects/intention`.
 
 ```bash
-npm install
+npm ci
 npm start
 ```
 
-Scan the displayed QR code using Expo Go on a device connected to the same network.
+Scan the displayed QR code using a compatible Expo Go version on a device connected to the same network. To test the complete native application, build and install it with the commands below.
+
+### Native Android and iOS apps
+
+```bash
+# Android: Android SDK + JDK, and a connected phone or running emulator
+npm run android
+
+# iOS: macOS + full Xcode + CocoaPods, and an iOS simulator or device
+npm run ios
+```
+
+These commands generate the native projects and install the app. `npm run prebuild` generates both native projects separately when needed. The generated `android/` and `ios/` directories remain untracked; app configuration and config plugins are their source of truth.
+
+For an installable Android APK without a running development server, use the included EAS preview profile (requires an Expo account and EAS project setup):
+
+```bash
+npx eas-cli build --platform android --profile preview
+```
+
+The `production` profile creates an Android App Bundle for store distribution. iOS device builds require Apple signing credentials; this repository does not include signing secrets. Keep the existing signing certificate when publishing an update over a previous installation so local habit data can remain available.
 
 ### Browser preview
 
 ```bash
-npx expo start --web
+npm run web
 ```
 
 The browser preview uses the same screens and SQLite repository. `metro.config.js` supports SQLite WebAssembly and sends the isolation headers required by browser storage. Static web hosting must also send `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp`.
@@ -93,9 +115,17 @@ Device acceptance checks (Android and iOS):
 
 ```bash
 npm run validate
+
+# Tests + type checking + lint + Android and iOS production bundles
+npm run validate:mobile
+
+# Optional browser production bundle
+npm run export:web
 ```
 
-The validation command runs the automated tests, TypeScript type checking, and Expo linting. The test suite covers habit creation and editing, daily completion and undo, duplicate and future-date prevention, archiving and restoring, completion-history preservation, streak calculations, missed days, year/month boundaries, leap years, and daylight-saving transitions. Reminder tests cover permission refusal/grant, channel setup, Android/iOS triggers, changing name/time, disabling, archiving/restoring, deleting, reconciliation, scheduling failures, notification tap IDs, time validation, and the version 1 → 2 data migration. Native notification delivery must still be checked on devices.
+The validation command runs the automated tests, TypeScript type checking, and Expo linting. The test suite covers habit creation and editing, daily completion and undo, duplicate and future-date prevention, archiving and restoring, completion-history preservation, streak calculations, missed days, year/month boundaries, leap years, and daylight-saving transitions. Reminder tests cover permission refusal/grant, channel setup, Android/iOS triggers, changing name/time, disabling, archiving/restoring, deleting, reconciliation, scheduling failures, notification tap IDs, time validation, and the version 1 → 2 data migration. Daily progress and details refresh at local midnight and when returning from the background, including daylight-saving, month/year, and leap-day boundaries. Native notification delivery must still be checked on devices.
+
+GitHub Actions repeats dependency compatibility, tests, type checking, linting, and Android/iOS/web bundle exports on relevant pushes and pull requests. Bundle exports verify JavaScript/assets, not platform compilation or physical-device notification delivery.
 
 ## Project structure
 

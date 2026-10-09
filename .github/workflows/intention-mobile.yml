@@ -1,0 +1,39 @@
+name: Niyyah React Native validation
+
+on:
+  push:
+    paths:
+      - 'projects/intention/**'
+      - '.github/workflows/intention-mobile.yml'
+  pull_request:
+    paths:
+      - 'projects/intention/**'
+      - '.github/workflows/intention-mobile.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: projects/intention
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: projects/intention/package-lock.json
+      - run: npm ci
+      - run: npx expo install --check
+      - run: npm run validate:mobile
+      - run: npm run export:web
+      - uses: actions/upload-artifact@v4
+        with:
+          name: niyyah-platform-bundles
+          path: projects/intention/dist
+          retention-days: 7

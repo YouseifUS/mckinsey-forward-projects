@@ -1,5 +1,5 @@
 import { Component, type ErrorInfo, type PropsWithChildren } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, View } from 'react-native';
+import { Platform, Pressable, SafeAreaView, StyleSheet, View } from 'react-native';
 import { AppText } from './app-text';
 import { colors, radius, spacing } from '@/theme/theme';
 
@@ -39,12 +39,12 @@ export class DatabaseErrorBoundary extends Component<PropsWithChildren, State> {
       );
     }
 
-    return <View key={this.state.retryKey} style={styles.fill}>{this.props.children}</View>;
+    return <View {...(Platform.OS === 'web' ? { dir: 'rtl' } : {})} key={this.state.retryKey} style={styles.fill}>{this.props.children}</View>;
   }
 }
 
 const styles = StyleSheet.create({
-  fill: { flex: 1, direction: 'rtl' },
+  fill: { flex: 1, ...(Platform.OS !== 'web' && { direction: 'rtl' as const }) },
   safeArea: { flex: 1, backgroundColor: colors.background },
   content: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl, gap: spacing.md },
   eyebrow: { color: colors.primary, fontSize: 13, fontWeight: '800' },

@@ -44,7 +44,13 @@
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "validate": "npm run test && npm run typecheck && npm run lint"
+    "validate": "npm run test && npm run typecheck && npm run lint",
+    "web": "expo start --web",
+    "prebuild": "expo prebuild",
+    "export:android": "expo export --platform android --output-dir dist/android",
+    "export:ios": "expo export --platform ios --output-dir dist/ios",
+    "export:web": "expo export --platform web --output-dir dist/web",
+    "validate:mobile": "npm run validate && npm run export:android && npm run export:ios"
   },
   "private": true
 }
