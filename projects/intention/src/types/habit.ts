@@ -5,9 +5,11 @@ export type HabitInput = {
   cue: string;
   routine: string;
   reward: string;
+  reminderTime?: string | null;
 };
 
 export type Habit = HabitInput & {
+  reminderTime: string | null;
   id: string;
   createdAt: string;
   updatedAt: string;
@@ -40,4 +42,5 @@ export const EMPTY_HABIT_DRAFT: HabitDraft = {
   cue: '',
   routine: '',
   reward: '',
+  reminderTime: null,
 };

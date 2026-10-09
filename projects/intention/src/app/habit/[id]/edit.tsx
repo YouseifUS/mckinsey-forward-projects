@@ -5,16 +5,17 @@ import { Screen } from '@/components/screen';
 import { PageHeader } from '@/components/page-header';
 import { TextField } from '@/components/text-field';
 import { AppButton } from '@/components/app-button';
+import { ReminderField } from '@/components/reminder-field';
 import { AppText } from '@/components/app-text';
 import { ErrorState, LoadingState } from '@/components/states';
 import { useHabitDetails } from '@/hooks/use-habit-details';
 import { useDatabase } from '@/database/use-database';
-import { updateHabit } from '@/database/habit-repository';
+import { updateHabit } from '@/services/habit-actions';
 import type { HabitDetails, HabitDraft } from '@/types/habit';
 import type { DatabaseClient } from '@/database/client';
 import { colors, spacing } from '@/theme/theme';
 
-const FIELDS: { key: keyof HabitDraft; label: string; helper: string; multiline?: boolean }[] = [
+const FIELDS: { key: Exclude<keyof HabitDraft, 'reminderTime'>; label: string; helper: string; multiline?: boolean }[] = [
   { key: 'name', label: 'اسم العادة', helper: 'اسم بسيط للممارسة دي', multiline: false },
   { key: 'intention', label: 'النية', helper: 'الصفة أو الاتجاه اللي حابب تنمّيه' },
   { key: 'meaning', label: 'المعنى الشخصي', helper: 'ليه العادة دي مهمة بالنسبالك' },
@@ -51,12 +52,14 @@ function EditForm({ db, habit }: { db: DatabaseClient; habit: HabitDetails }) {
     cue: habit.cue,
     routine: habit.routine,
     reward: habit.reward,
+    reminderTime: habit.reminderTime,
   });
   const [fieldError, setFieldError] = useState<string | null>(null);
+  const [reminderBusy, setReminderBusy] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const save = async () => {
-    if (saving) return;
+    if (saving || reminderBusy) return;
     const missing = FIELDS.find((field) => !draft[field.key].trim());
     if (missing) {
       setFieldError(`${missing.label} مطلوب.`);
@@ -96,8 +99,14 @@ function EditForm({ db, habit }: { db: DatabaseClient; habit: HabitDetails }) {
                 <AppText style={styles.helper}>{field.helper}</AppText>
               </View>
             ))}
+            <ReminderField
+              value={draft.reminderTime ?? null}
+              disabled={saving}
+              onBusyChange={setReminderBusy}
+              onChange={(reminderTime) => setDraft((current) => ({ ...current, reminderTime }))}
+            />
             {fieldError ? <AppText accessibilityLiveRegion="polite" style={styles.error}>{fieldError}</AppText> : null}
-            <AppButton label="احفظ التعديلات" loading={saving} onPress={() => void save()} />
+            <AppButton label="احفظ التعديلات" loading={saving} disabled={reminderBusy} onPress={() => void save()} />
           </ScrollView>
         </KeyboardAvoidingView>
   );

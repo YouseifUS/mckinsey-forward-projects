@@ -1,6 +1,6 @@
 import type { DatabaseClient } from './client';
 
-const CURRENT_DATABASE_VERSION = 1;
+const CURRENT_DATABASE_VERSION = 2;
 
 export async function initializeDatabase(db: DatabaseClient): Promise<void> {
   await db.execAsync('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;');
@@ -44,6 +44,20 @@ export async function initializeDatabase(db: DatabaseClient): Promise<void> {
       ON completions(habit_id, completion_date);
 
       PRAGMA user_version = 1;
+      COMMIT;
+    `);
+  }
+  if (currentVersion < 2) {
+    await db.execAsync(`
+      BEGIN;
+      ALTER TABLE habits ADD COLUMN reminder_time TEXT DEFAULT NULL CHECK(
+        reminder_time IS NULL OR (
+          length(reminder_time) = 5 AND
+          reminder_time GLOB '[0-2][0-9]:[0-5][0-9]' AND
+          substr(reminder_time, 1, 2) <= '23'
+        )
+      );
+      PRAGMA user_version = 2;
       COMMIT;
     `);
   }

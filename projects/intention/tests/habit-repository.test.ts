@@ -32,6 +32,41 @@ describe('SQLite habit repository', () => {
 
   afterEach(() => db.close());
 
+  it('preserves legacy habits and completion history when migrating version 1', async () => {
+    await db.execAsync(`
+      DROP TABLE completions;
+      DROP TABLE habits;
+      CREATE TABLE habits (
+        id TEXT PRIMARY KEY, name TEXT, intention TEXT, meaning TEXT, cue TEXT,
+        routine TEXT, reward TEXT, created_at TEXT, updated_at TEXT, is_archived INTEGER
+      );
+      CREATE TABLE completions (
+        id TEXT PRIMARY KEY, habit_id TEXT, completion_date TEXT, created_at TEXT,
+        FOREIGN KEY (habit_id) REFERENCES habits(id) ON DELETE CASCADE,
+        UNIQUE(habit_id, completion_date)
+      );
+      INSERT INTO habits VALUES ('legacy', 'Reading', 'Learn', 'Growth', 'Coffee', 'Read', 'Tea', '2025-01-01', '2025-01-01', 0);
+      INSERT INTO completions VALUES ('done', 'legacy', '2025-01-01', '2025-01-01');
+      PRAGMA user_version = 1;
+    `);
+    await initializeDatabase(db);
+    await initializeDatabase(db);
+    const habit = await getHabitDetails(db, 'legacy');
+    expect(habit?.reminderTime).toBeNull();
+    expect(habit?.name).toBe('Reading');
+    expect(habit?.completionDates).toEqual(['2025-01-01']);
+    expect(await db.getFirstAsync('PRAGMA user_version')).toEqual({ user_version: 2 });
+  });
+
+  it('validates reminder times at the repository boundary', async () => {
+    await expect(createHabit(db, { ...input, reminderTime: '24:00' })).rejects.toMatchObject({ code: 'INVALID_INPUT' });
+    expect(await listHabits(db)).toEqual([]);
+    const habit = await createHabit(db, { ...input, reminderTime: '00:00' });
+    expect(habit.reminderTime).toBe('00:00');
+    await updateHabit(db, habit.id, { ...input, reminderTime: null });
+    expect((await getHabitDetails(db, habit.id))?.reminderTime).toBeNull();
+  });
+
   it('creates and lists a habit with separate intention and meaning', async () => {
     const habit = await createHabit(db, input, new Date('2025-01-01T12:00:00Z'));
     const habits = await listHabits(db, false, '2025-01-01');

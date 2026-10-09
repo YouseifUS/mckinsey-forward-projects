@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.1.0 — 2026-10-09
+
+- Optional daily habit time and a local notification titled with the habit name.
+- Explicit notification permission flow, settings recovery, and native time picker.
+- Reminder lifecycle handling for rename, time changes, disable, archive, restore, and delete.
+- Notification tap navigation and foreground/startup schedule reconciliation.
+- Database migration preserving existing habits/history; reminder lifecycle regression tests.
+- Android exact alarm declaration; native app rebuild required for the new notifications module.
+
+Validation: 50 automated tests pass, TypeScript and lint checks pass, and Android/iOS/web bundles export successfully. The Android release APK builds successfully; its signature, version, reminder permissions, and native notification/time-picker modules are verified. Native notification delivery still requires device testing. The release APK preserves the previous testing certificate and application ID.
+
 ## 2.0.0 — 2026-10-08
 
 The app is now named **نية (Niyyah)** and has an Islamic geometric and gold visual identity.

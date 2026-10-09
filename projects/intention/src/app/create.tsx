@@ -15,14 +15,15 @@ import { TextField } from '@/components/text-field';
 import { AppButton } from '@/components/app-button';
 import { AppIcon } from '@/components/app-icon';
 import { AppText } from '@/components/app-text';
+import { ReminderField } from '@/components/reminder-field';
 import { BrandMark } from '@/components/brand-mark';
-import { createHabit } from '@/database/habit-repository';
+import { createHabit } from '@/services/habit-actions';
 import { useDatabase } from '@/database/use-database';
 import { EMPTY_HABIT_DRAFT, type HabitDraft } from '@/types/habit';
 import { colors, fonts, radius, spacing } from '@/theme/theme';
 import { formatArabicNumber } from '@/business/dates';
 
-type FieldName = keyof HabitDraft;
+type FieldName = Exclude<keyof HabitDraft, 'reminderTime'>;
 
 type Step = {
   field: FieldName;
@@ -92,6 +93,7 @@ export default function CreateHabitScreen() {
   const [draft, setDraft] = useState<HabitDraft>(EMPTY_HABIT_DRAFT);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [reminderBusy, setReminderBusy] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
   const isReview = step === STEPS.length;
 
@@ -127,7 +129,7 @@ export default function CreateHabitScreen() {
   };
 
   const save = async () => {
-    if (saving) return;
+    if (saving || reminderBusy) return;
     const missing = STEPS.find((item) => !draft[item.field].trim());
     if (missing) {
       setStep(STEPS.indexOf(missing));
@@ -162,7 +164,15 @@ export default function CreateHabitScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}>
           {isReview ? (
-            <Review draft={draft} onEdit={(targetStep) => setStep(targetStep)} />
+            <View style={styles.stepContent}>
+              <Review draft={draft} onEdit={(targetStep) => setStep(targetStep)} />
+              <ReminderField
+                value={draft.reminderTime ?? null}
+                disabled={saving}
+                onBusyChange={setReminderBusy}
+                onChange={(reminderTime) => setDraft((current) => ({ ...current, reminderTime }))}
+              />
+            </View>
           ) : (
             <View style={styles.stepContent}>
               <View style={styles.stepHeading}>
@@ -194,10 +204,11 @@ export default function CreateHabitScreen() {
 
           {isReview && error ? <AppText style={styles.reviewError}>{error}</AppText> : null}
           <View style={styles.actions}>
-            <AppButton label="رجوع" variant="ghost" onPress={goBack} style={styles.actionButton} />
+            <AppButton label="رجوع" variant="ghost" disabled={saving || reminderBusy} onPress={goBack} style={styles.actionButton} />
             <AppButton
               label={isReview ? 'أنشئ العادة' : 'كمّل'}
               loading={saving}
+              disabled={reminderBusy}
               onPress={isReview ? () => void save() : continueForward}
               style={styles.actionButton}
             />

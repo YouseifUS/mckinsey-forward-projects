@@ -1,3 +1,4 @@
+import { isValidReminderTime } from '@/business/reminder-time';
 import type { DatabaseClient } from './client';
 import { calculateHabitStatistics } from '@/business/streaks';
 import { isFutureDateKey, isValidDateKey, toLocalDateKey } from '@/business/dates';
@@ -12,6 +13,7 @@ type HabitRow = {
   cue: string;
   routine: string;
   reward: string;
+  reminder_time: string | null;
   created_at: string;
   updated_at: string;
   is_archived: number;
@@ -22,7 +24,7 @@ type CompletionRow = {
   completion_date: string;
 };
 
-const FIELD_LABELS: Record<keyof HabitInput, string> = {
+const FIELD_LABELS: Record<Exclude<keyof HabitInput, 'reminderTime'>, string> = {
   name: 'اسم العادة',
   intention: 'النية',
   meaning: 'المعنى الشخصي',
@@ -50,6 +52,7 @@ function toHabit(row: HabitRow): Habit {
     cue: row.cue,
     routine: row.routine,
     reward: row.reward,
+    reminderTime: row.reminder_time,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     isArchived: row.is_archived === 1,
@@ -66,13 +69,17 @@ function cleanInput(input: HabitInput): HabitInput {
     reward: input.reward.trim(),
   };
 
-  const missingField = (Object.keys(cleaned) as (keyof HabitInput)[]).find(
+  const missingField = (Object.keys(cleaned) as (keyof typeof cleaned)[]).find(
     (field) => cleaned[field].length === 0,
   );
   if (missingField) {
     throw new HabitRepositoryError(`${FIELD_LABELS[missingField]} مطلوب.`, 'INVALID_INPUT');
   }
-  return cleaned;
+  const reminderTime = input.reminderTime ?? null;
+  if (reminderTime !== null && !isValidReminderTime(reminderTime)) {
+    throw new HabitRepositoryError('وقت التذكير غير صحيح.', 'INVALID_INPUT');
+  }
+  return { ...cleaned, reminderTime };
 }
 
 export async function createHabit(
@@ -86,8 +93,8 @@ export async function createHabit(
 
   await db.runAsync(
     `INSERT INTO habits
-      (id, name, intention, meaning, cue, routine, reward, created_at, updated_at, is_archived)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`,
+      (id, name, intention, meaning, cue, routine, reward, reminder_time, created_at, updated_at, is_archived)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`,
     id,
     habit.name,
     habit.intention,
@@ -95,6 +102,7 @@ export async function createHabit(
     habit.cue,
     habit.routine,
     habit.reward,
+    habit.reminderTime ?? null,
     timestamp,
     timestamp,
   );
@@ -111,7 +119,7 @@ export async function updateHabit(
   const habit = cleanInput(input);
   const result = await db.runAsync(
     `UPDATE habits SET
-      name = ?, intention = ?, meaning = ?, cue = ?, routine = ?, reward = ?, updated_at = ?
+      name = ?, intention = ?, meaning = ?, cue = ?, routine = ?, reward = ?, reminder_time = ?, updated_at = ?
      WHERE id = ?`,
     habit.name,
     habit.intention,
@@ -119,6 +127,7 @@ export async function updateHabit(
     habit.cue,
     habit.routine,
     habit.reward,
+    habit.reminderTime ?? null,
     now.toISOString(),
     id,
   );

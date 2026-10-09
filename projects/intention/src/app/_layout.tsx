@@ -1,3 +1,4 @@
+import { ReminderObserver } from '@/components/reminder-observer';
 import { Stack } from 'expo-router';
 import { SQLiteProvider } from 'expo-sqlite';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -23,6 +24,7 @@ export default function RootLayout() {
         <SQLiteProvider
           databaseName="intention.db"
           onInit={(database) => initializeDatabase(database as unknown as DatabaseClient)}>
+          <ReminderObserver />
           <Stack screenOptions={{ headerShown: false, animation: 'slide_from_left', contentStyle: { backgroundColor: colors.background } }}>
             <Stack.Screen name="index" />
             <Stack.Screen name="create" options={{ presentation: 'card' }} />

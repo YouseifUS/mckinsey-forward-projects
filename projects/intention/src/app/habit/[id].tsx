@@ -15,10 +15,10 @@ import { useHabitDetails } from '@/hooks/use-habit-details';
 import { useDatabase } from '@/database/use-database';
 import {
   completeHabit,
-  deleteHabit,
-  setHabitArchived,
   undoCompletion,
 } from '@/database/habit-repository';
+import { deleteHabit, setHabitArchived } from '@/services/habit-actions';
+import { formatReminderTime } from '@/business/reminder-time';
 import { colors, fonts, radius, spacing } from '@/theme/theme';
 
 export default function HabitDetailsScreen() {
@@ -118,6 +118,14 @@ export default function HabitDetailsScreen() {
               onError={setNotice}
             />
           ) : null}
+
+          <Section label="التذكير اليومي">
+            <AppText style={styles.smallLabel}>
+              {habit.reminderTime
+                ? `${habit.isArchived ? 'متوقف أثناء الأرشفة · ' : ''}كل يوم ${formatReminderTime(habit.reminderTime)} بتوقيت جهازك · يحتاج إذن الإشعارات`
+                : 'بدون تذكير · تقدر تختار الوقت من تعديل العادة'}
+            </AppText>
+          </Section>
 
           <Section label="دورة العادة" subtitle="الإشارة بتبدأ الفعل، والمكافأة بتساعده يثبت.">
             <View style={styles.loop}>

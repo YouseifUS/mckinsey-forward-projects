@@ -20,12 +20,14 @@ The app guides each habit through five connected ideas:
 
 <img src="./docs/images/niyyah-v2-home.png" alt="نية v2.0.0 home screen" width="320" />
 
+**Version 2.1.0** adds optional daily reminders: choose a local time, allow notification permission, and receive a notification with the habit name. Reminders follow time/name changes and pause when a habit is archived or removed.
+
 ### Download and source code
 
-- [Download the Android APK](https://github.com/YouseifUS/mckinsey-forward-projects/releases/download/intention-v2.0.0/niyyah-v2.0.0.apk)
-- [View the v2.0.0 release notes](https://github.com/YouseifUS/mckinsey-forward-projects/releases/tag/intention-v2.0.0)
+- [Download the Android APK](https://github.com/YouseifUS/mckinsey-forward-projects/releases/download/intention-v2.1.0/niyyah-v2.1.0.apk)
+- [View the v2.1.0 release notes](https://github.com/YouseifUS/mckinsey-forward-projects/releases/tag/intention-v2.1.0)
 - [Browse the complete source code](./projects/intention)
-- Version: `2.0.0`
+- Version: `2.1.0`
 - Android support: Android 7.0 and newer (`arm64-v8a` and `armeabi-v7a`)
 
 > The APK is signed with a testing key and is intended for direct installation and evaluation. It is not a Google Play production build.

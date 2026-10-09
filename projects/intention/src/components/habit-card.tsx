@@ -5,6 +5,7 @@ import { CompletionButton } from './completion-button';
 import { AppText } from './app-text';
 import type { HabitSummary } from '@/types/habit';
 import { colors, fonts, radius, shadows, spacing } from '@/theme/theme';
+import { formatReminderTime } from '@/business/reminder-time';
 import { formatArabicNumber } from '@/business/dates';
 
 type Props = {
@@ -33,6 +34,7 @@ export function HabitCard({ habit, onToggle, onError }: Props) {
         <AppText style={styles.intention}>{habit.intention}</AppText>
       </Pressable>
 
+      {habit.reminderTime ? <AppText style={styles.metric}>موعد التذكير: {formatReminderTime(habit.reminderTime)}</AppText> : null}
       <View style={styles.metrics}>
         <AppText style={styles.metric}><AppText style={styles.metricValue}>{formatArabicNumber(habit.currentStreak)}</AppText> {habit.currentStreak >= 3 && habit.currentStreak <= 10 ? 'أيام متتابعة' : 'يوم متتابع'}</AppText>
         <View style={styles.dot} />

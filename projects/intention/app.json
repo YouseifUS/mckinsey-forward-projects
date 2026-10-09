@@ -2,7 +2,7 @@
   "expo": {
     "name": "نية",
     "slug": "intention",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "intention",
@@ -10,7 +10,7 @@
     "ios": {
       "icon": "./assets/images/icon.png",
       "bundleIdentifier": "com.intention.habits",
-      "buildNumber": "2"
+      "buildNumber": "3"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +19,10 @@
       },
       "predictiveBackGestureEnabled": true,
       "package": "com.intention.habits",
-      "versionCode": 2
+      "versionCode": 3,
+      "permissions": [
+        "android.permission.SCHEDULE_EXACT_ALARM"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -31,7 +34,14 @@
           "imageWidth": 120
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "expo-notifications",
+        {
+          "defaultChannel": "habit-reminders",
+          "color": "#866522"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
