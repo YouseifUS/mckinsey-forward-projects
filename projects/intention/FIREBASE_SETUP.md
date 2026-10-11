@@ -2,6 +2,18 @@
 
 Work is isolated on `feature/firebase-integration`. Do not merge into main without the owner's explicit approval.
 
+## Connected project
+
+The Firebase project is **Neyya** (`neyya-fc8d6`), on the no-cost Spark plan. The registered Web app is **Neyya Expo**. Email/Password sign-in is enabled.
+
+The checked-in `.env` contains public client identifiers so builds on this branch use this project. It contains no administrator credentials or account passwords. Use an ignored `.env.local` to override these values for another development project. Emulator tests explicitly target `demo-neyya`, never this project.
+
+Console: https://console.firebase.google.com/project/neyya-fc8d6/overview
+
+Firestore creation and rule publication are still pending. Do not treat this setup as release-ready until the database and live ownership checks are complete.
+
+Verified against this real project: email account creation, sign-out, wrong-password rejection and sign-in. The temporary test account was removed afterward. Android, iOS and Web exports also passed with the configured client settings. Firestore live sync/ownership checks have not run yet.
+
 ## Create the cloud project
 
 1. Open https://console.firebase.google.com/ and create a Firebase project. Google Analytics is optional for this feature.
