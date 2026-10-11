@@ -1,3 +1,6 @@
+import { AuthProvider, useAuth } from '@/cloud/auth-provider';
+import { SyncProvider } from '@/cloud/sync-provider';
+import { accountDatabaseName, initializeSyncStore } from '@/cloud/sync-store';
 import { ReminderObserver } from '@/components/reminder-observer';
 import { Stack } from 'expo-router';
 import { SQLiteProvider } from 'expo-sqlite';
@@ -18,20 +21,34 @@ export default function RootLayout() {
     Amiri: require('../../assets/fonts/Amiri-Regular.ttf'),
   });
   if (!fontsLoaded && !fontError) return <Screen><LoadingState label="أهلًا بك في نية…" /></Screen>;
+  return <AuthProvider><SessionLayout /></AuthProvider>;
+}
+
+function SessionLayout() {
+  const { user, loading } = useAuth();
+  if (loading) return <Screen><LoadingState label="جارٍ استعادة حسابك…" /></Screen>;
   return (
-    <DatabaseErrorBoundary>
+    <DatabaseErrorBoundary key={user?.uid ?? 'guest'}>
       <GestureHandlerRootView style={styles.fill}>
         <SQLiteProvider
-          databaseName="intention.db"
-          onInit={(database) => initializeDatabase(database as unknown as DatabaseClient)}>
+          key={user?.uid ?? 'guest'}
+          databaseName={user ? accountDatabaseName(user.uid) : 'intention.db'}
+          onInit={async (database) => {
+            const db = database as unknown as DatabaseClient;
+            await initializeDatabase(db);
+            if (user) await initializeSyncStore(db);
+          }}>
+          <SyncProvider>
           <ReminderObserver />
           <Stack screenOptions={{ headerShown: false, animation: 'slide_from_left', contentStyle: { backgroundColor: colors.background } }}>
             <Stack.Screen name="index" />
+            <Stack.Screen name="account" />
             <Stack.Screen name="create" options={{ presentation: 'card' }} />
             <Stack.Screen name="habit/[id]" />
             <Stack.Screen name="habit/[id]/edit" />
             <Stack.Screen name="archived" />
           </Stack>
+          </SyncProvider>
         </SQLiteProvider>
       </GestureHandlerRootView>
     </DatabaseErrorBoundary>

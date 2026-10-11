@@ -155,3 +155,9 @@ This project is open source under the repository's [MIT License](../../LICENSE).
 This is an independent personal learning project created through individual effort. It is **not an official project of McKinsey & Company or the McKinsey Forward Program**, and it is not sponsored, endorsed, reviewed, or maintained by McKinsey & Company.
 
 هذا المشروع اجتهاد شخصي مستقل، وليس مشروعًا رسميًا تابعًا لشركة McKinsey & Company أو برنامج McKinsey Forward، ولا يمثل اعتمادًا أو رعاية من جانبهم.
+
+## Firebase account integration (feature branch)
+
+Email/password registration, login, logout and password reset are available after configuring Firebase. Each account has its own local SQLite database and syncs habits/history with Cloud Firestore while the app is open. Guest use and the original database are retained. The account screen offers a one-time copy of existing local habits, with the original left intact.
+
+See [Firebase setup, tests, offline behavior and rollback](./FIREBASE_SETUP.md). Missing Firebase configuration leaves the app in local mode. Cloud setup and a physical-device test are still required before release. Google sign-in is not included in this implementation.

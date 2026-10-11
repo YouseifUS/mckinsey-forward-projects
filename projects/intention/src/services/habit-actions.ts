@@ -74,8 +74,8 @@ export function deleteHabit(db: DatabaseClient, id: string) {
   });
 }
 
-export function refreshHabitReminders(db: DatabaseClient) {
+export function refreshHabitReminders(db: DatabaseClient, active = () => true) {
   return serialize(async () => {
-    await reconcileHabitReminders(await repository.listHabits(db));
+    if (active()) await reconcileHabitReminders(await repository.listHabits(db));
   });
 }

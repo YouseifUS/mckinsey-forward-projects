@@ -1,3 +1,4 @@
+import { notifyDatabaseChanged, withDatabaseLock } from './access';
 import { isValidReminderTime } from '@/business/reminder-time';
 import type { DatabaseClient } from './client';
 import { calculateHabitStatistics } from '@/business/streaks';
@@ -82,7 +83,7 @@ function cleanInput(input: HabitInput): HabitInput {
   return { ...cleaned, reminderTime };
 }
 
-export async function createHabit(
+async function createHabitUnlocked(
   db: DatabaseClient,
   input: HabitInput,
   now = new Date(),
@@ -110,7 +111,7 @@ export async function createHabit(
   return (await getHabit(db, id)) as Habit;
 }
 
-export async function updateHabit(
+async function updateHabitUnlocked(
   db: DatabaseClient,
   id: string,
   input: HabitInput,
@@ -203,7 +204,7 @@ export async function listHabits(
   });
 }
 
-export async function setHabitArchived(
+async function setHabitArchivedUnlocked(
   db: DatabaseClient,
   id: string,
   isArchived: boolean,
@@ -220,14 +221,14 @@ export async function setHabitArchived(
   }
 }
 
-export async function deleteHabit(db: DatabaseClient, id: string): Promise<void> {
+async function deleteHabitUnlocked(db: DatabaseClient, id: string): Promise<void> {
   const result = await db.runAsync('DELETE FROM habits WHERE id = ?', id);
   if (result.changes === 0) {
     throw new HabitRepositoryError('العادة غير موجودة.', 'NOT_FOUND');
   }
 }
 
-export async function completeHabit(
+async function completeHabitUnlocked(
   db: DatabaseClient,
   habitId: string,
   completionDate = toLocalDateKey(),
@@ -254,7 +255,7 @@ export async function completeHabit(
   return result.changes > 0;
 }
 
-export async function undoCompletion(
+async function undoCompletionUnlocked(
   db: DatabaseClient,
   habitId: string,
   completionDate = toLocalDateKey(),
@@ -272,4 +273,52 @@ export async function undoCompletion(
     completionDate,
   );
   return result.changes > 0;
+}
+
+export function createHabit(...args: Parameters<typeof createHabitUnlocked>) {
+  return withDatabaseLock(args[0], async () => {
+    const result = await createHabitUnlocked(...args);
+    notifyDatabaseChanged(args[0]);
+    return result;
+  });
+}
+
+export function updateHabit(...args: Parameters<typeof updateHabitUnlocked>) {
+  return withDatabaseLock(args[0], async () => {
+    const result = await updateHabitUnlocked(...args);
+    notifyDatabaseChanged(args[0]);
+    return result;
+  });
+}
+
+export function setHabitArchived(...args: Parameters<typeof setHabitArchivedUnlocked>) {
+  return withDatabaseLock(args[0], async () => {
+    const result = await setHabitArchivedUnlocked(...args);
+    notifyDatabaseChanged(args[0]);
+    return result;
+  });
+}
+
+export function deleteHabit(...args: Parameters<typeof deleteHabitUnlocked>) {
+  return withDatabaseLock(args[0], async () => {
+    const result = await deleteHabitUnlocked(...args);
+    notifyDatabaseChanged(args[0]);
+    return result;
+  });
+}
+
+export function completeHabit(...args: Parameters<typeof completeHabitUnlocked>) {
+  return withDatabaseLock(args[0], async () => {
+    const result = await completeHabitUnlocked(...args);
+    notifyDatabaseChanged(args[0]);
+    return result;
+  });
+}
+
+export function undoCompletion(...args: Parameters<typeof undoCompletionUnlocked>) {
+  return withDatabaseLock(args[0], async () => {
+    const result = await undoCompletionUnlocked(...args);
+    notifyDatabaseChanged(args[0]);
+    return result;
+  });
 }

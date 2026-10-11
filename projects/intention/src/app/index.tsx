@@ -1,3 +1,5 @@
+import { useAuth } from '@/cloud/auth-provider';
+import { useSync } from '@/cloud/sync-provider';
 import { useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
@@ -17,6 +19,8 @@ import { formatArabicNumber, formatFriendlyDate } from '@/business/dates';
 
 export default function HomeScreen() {
   const db = useDatabase();
+  const { user } = useAuth();
+  const { status } = useSync();
   const { habits, loading, error, reload } = useHabits(false);
   const [refreshing, setRefreshing] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -72,6 +76,8 @@ export default function HomeScreen() {
             ) : <View style={styles.heroRule} />}
           </View>
 
+          <AppButton label={user ? 'حسابي والمزامنة' : 'تسجيل الدخول وحفظ عاداتك'} variant="ghost" onPress={() => router.push('/account')} />
+          {user ? <AppText accessibilityLiveRegion="polite" style={styles.privacy}>{status}</AppText> : null}
           {notice ? <AppText accessibilityLiveRegion="polite" style={styles.notice}>{notice}</AppText> : null}
           {habits.length === 0 ? (
             <View style={styles.empty}>
@@ -98,7 +104,7 @@ export default function HomeScreen() {
       {!loading && !error ? (
         <View style={styles.footer}>
           <AppButton label={habits.length ? 'اغرس نية جديدة' : 'ابدأ بنيّة'} icon={<AppIcon name="add" size={20} color={colors.white} />} onPress={() => router.push('/create')} />
-          <AppText style={styles.privacy}>رحلتك لك وحدك · بياناتك محفوظة على جهازك</AppText>
+          <AppText style={styles.privacy}>{user ? 'رحلتك لك وحدك · محفوظة محليًا وتُزامَن مع حسابك' : 'رحلتك لك وحدك · بياناتك محفوظة على جهازك'}</AppText>
         </View>
       ) : null}
     </Screen>

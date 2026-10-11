@@ -1,3 +1,12 @@
+## Unreleased — Firebase integration (feature/firebase-integration)
+
+- Email/password accounts and password reset; persistent sessions.
+- Account-isolated SQLite storage, durable mutation queue and foreground Firestore sync.
+- Explicit, transactional, idempotent guest-data copy preserving source habits/history.
+- Per-date completion sync and deletion/undo tombstones; stale habit edits cannot resurrect deletion.
+- Owner-only Firestore rules and Auth/Firestore emulator integration tests in CI.
+- Cloud configuration and physical-device testing required before release; see FIREBASE_SETUP.md.
+
 # Changelog
 
 ## Unreleased

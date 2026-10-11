@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function owner(uid) { return request.auth != null && request.auth.uid == uid; }
+    function text(value) { return value is string && value.size() > 0 && value.size() <= 200000; }
+    function mutation(d) { return text(d.mutationId) && d.deleted is bool; }
+    function habit(d, id) {
+      return mutation(d) && d.id == id && (
+        (d.deleted == true && d.keys().hasOnly(['id', 'deleted', 'mutationId'])) ||
+        (d.deleted == false && d.keys().hasOnly(['id', 'name', 'intention', 'meaning', 'cue',
+          'routine', 'reward', 'reminderTime', 'createdAt', 'updatedAt', 'isArchived', 'deleted', 'mutationId']) &&
+          text(d.name) && text(d.intention) && text(d.meaning) && text(d.cue) && text(d.routine) && text(d.reward) &&
+          text(d.createdAt) && text(d.updatedAt) && d.isArchived is bool &&
+          (d.reminderTime == null || (d.reminderTime is string && d.reminderTime.matches('([01][0-9]|2[0-3]):[0-5][0-9]'))))
+      );
+    }
+    match /users/{uid}/habits/{id} {
+      allow read: if owner(uid);
+      allow create: if owner(uid) && habit(request.resource.data, id);
+      allow update: if owner(uid) && habit(request.resource.data, id) && resource.data.deleted == false;
+      // Keep tombstones so offline devices learn about deletions.
+      allow delete: if false;
+    }
+    match /users/{uid}/completions/{id} {
+      allow read: if owner(uid);
+      allow create, update: if owner(uid) && mutation(request.resource.data) &&
+        request.resource.data.keys().hasOnly(['habitId', 'date', 'createdAt', 'deleted', 'mutationId']) &&
+        text(request.resource.data.habitId) && text(request.resource.data.createdAt) &&
+        request.resource.data.date is string && request.resource.data.date.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}') &&
+        id == request.resource.data.habitId + '_' + request.resource.data.date &&
+        (request.resource.data.deleted == true ||
+          get(/databases/$(database)/documents/users/$(uid)/habits/$(request.resource.data.habitId)).data.deleted == false);
+      allow delete: if false;
+    }
+  }
+}

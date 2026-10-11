@@ -6,7 +6,9 @@ function bind(params: DatabaseValue[]) {
 }
 
 export class NodeTestDatabase implements DatabaseClient {
-  private readonly database = new DatabaseSync(':memory:');
+  private readonly database: DatabaseSync;
+
+  constructor(filename = ':memory:') { this.database = new DatabaseSync(filename); }
 
   async execAsync(source: string): Promise<void> {
     this.database.exec(source);
