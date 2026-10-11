@@ -57,11 +57,22 @@ describe('durable SQLite sync and migration', () => {
     const guest = await database(false), account = await database();
     await createHabit(guest, input);
     const original = account.runAsync.bind(account);
+    let reached!: () => void, release!: () => void;
+    const atMarker = new Promise<void>((resolve) => { reached = resolve; });
+    const gate = new Promise<void>((resolve) => { release = resolve; });
     account.runAsync = async (sql, ...params) => {
-      if (sql.includes("INSERT INTO sync_meta VALUES ('guest_imported'")) throw new Error('disk full');
+      if (sql.includes("INSERT INTO sync_meta VALUES ('guest_imported'")) {
+        reached(); await gate; throw new Error('disk full');
+      }
       return original(sql, ...params);
     };
-    await expect(importGuestData(guest, account)).rejects.toThrow('disk full');
+    const importing = importGuestData(guest, account);
+    await atMarker;
+    // A sync snapshot must not publish data from an uncommitted migration.
+    const snapshot = pendingRecords(account);
+    release();
+    await expect(importing).rejects.toThrow('disk full');
+    expect(await snapshot).toEqual([]);
     expect(await listHabits(account)).toHaveLength(0);
     expect(await pendingRecords(account)).toHaveLength(0);
     account.runAsync = original;

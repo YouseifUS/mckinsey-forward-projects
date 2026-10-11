@@ -58,7 +58,9 @@ export function decodePending(row: PendingRecord): CloudRecord {
   return { kind: row.kind, id: row.id, data };
 }
 export async function pendingRecords(db: DatabaseClient): Promise<PendingRecord[]> {
-  return db.getAllAsync<PendingRecord>("SELECT * FROM sync_outbox ORDER BY CASE kind WHEN 'habit' THEN 0 ELSE 1 END, id");
+  return withDatabaseLock(db, () => db.getAllAsync<PendingRecord>(
+    "SELECT * FROM sync_outbox ORDER BY CASE kind WHEN 'habit' THEN 0 ELSE 1 END, id",
+  ));
 }
 export async function acknowledge(db: DatabaseClient, row: PendingRecord) {
   await withDatabaseLock(db, () => db.runAsync(

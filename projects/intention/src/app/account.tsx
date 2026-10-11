@@ -38,7 +38,7 @@ export default function AccountScreen() {
     } finally { await guest.closeAsync(); }
   };
   return <Screen>
-    <PageHeader title="حسابك في نية" />
+    <PageHeader title="حسابك في نية" onBack={() => router.replace('/')} />
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.content}>
       {!configured ? <AppText>تسجيل الدخول يحتاج إعداد Firebase. عاداتك محفوظة ويمكنك متابعة استخدام التطبيق على الجهاز.</AppText> : user ? <>
         <AppText>{user.email}</AppText>
@@ -49,12 +49,12 @@ export default function AccountScreen() {
           <AppButton label="نسخ عادات هذا الجهاز إلى حسابي" variant="secondary" disabled={busy} onPress={() => void action(migrate)} />
         </View>
         <AppText>عند تسجيل الخروج ترجع لعادات الجهاز. تغييرات الحساب غير المتزامنة تظل محفوظة حتى تسجيل الدخول لنفس الحساب. حذف التطبيق قبل اكتمال المزامنة قد يفقدها.</AppText>
-        <AppButton label="تسجيل الخروج" variant="ghost" disabled={busy} onPress={() => void action(async () => { await logout(); router.replace('/'); })} />
+        <AppButton label="تسجيل الخروج" variant="ghost" disabled={busy} onPress={() => void action(logout)} />
       </> : <>
         <AppText>احفظ عاداتك في حسابك واستعدها على جهاز آخر بعد اكتمال المزامنة. يمكنك متابعة العادات دون إنترنت بعد تسجيل الدخول.</AppText>
         <TextField label="البريد الإلكتروني" multiline={false} value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" autoComplete="email" editable={!busy} />
         <TextField label="كلمة المرور" multiline={false} value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" autoComplete={register ? 'new-password' : 'current-password'} editable={!busy} />
-        <AppButton label={register ? 'إنشاء حساب' : 'تسجيل الدخول'} loading={busy} disabled={!email.trim() || !password} onPress={() => void action(async () => { await login(email, password, register); router.replace('/account'); })} />
+        <AppButton label={register ? 'إنشاء حساب' : 'تسجيل الدخول'} loading={busy} disabled={!email.trim() || !password} onPress={() => void action(async () => { await login(email, password, register); })} />
         <AppButton label={register ? 'عندي حساب بالفعل' : 'إنشاء حساب جديد'} variant="ghost" disabled={busy} onPress={() => setRegister(!register)} />
         <AppButton label="نسيت كلمة المرور" variant="ghost" disabled={busy || !email.trim()} onPress={() => void action(async () => { await resetPassword(email); setMessage('لو البريد مسجل، هتوصلك رسالة لاستعادة كلمة المرور.'); })} />
       </>}
